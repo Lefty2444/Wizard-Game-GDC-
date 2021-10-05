@@ -23,6 +23,6 @@ public class PlayerMovement : MonoBehaviour
         // Caculate the movement vector using the horizontal and vertical input axies. Normalizing the input sets the magnitude of the vector as 1.
         Vector3 movementVector = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0).normalized;
         // Add a force based on the movement vector
-        rigidBody.AddForce(movementVector * movementSpeed);
+        rigidBody.AddForce(movementVector * movementSpeed * Time.deltaTime * 120);
     }
 }
