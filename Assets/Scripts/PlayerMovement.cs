@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     // Public variables can be seen by other scripts are are visible in the editor
-    public float movementSpeed = 1.0f;
+    public float movementSpeed = 150;
 
     // Private variables can only be seen by this script
     private Rigidbody2D rigidBody;
