@@ -6,6 +6,11 @@ public class PlayerMovement : MonoBehaviour
 {
     // Public variables can be seen by other scripts are are visible in the editor
     public float movementSpeed = 150;
+    public float  dashForce = 3f;
+    public float dashTime = 2f;
+
+    private bool canDash = true;
+    private float dashTimer;
 
     // Private variables can only be seen by this script
     private Rigidbody2D rigidBody;
@@ -15,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
     {
         // Gets the rigidbody component that is responsible for managing the 2D physics of this object
         rigidBody = GetComponent<Rigidbody2D>();
+        dashTimer = 1;
     }
 
     // Update is called once per frame
@@ -24,5 +30,37 @@ public class PlayerMovement : MonoBehaviour
         Vector3 movementVector = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0).normalized;
         // Add a force based on the movement vector
         rigidBody.AddForce(movementVector * movementSpeed * Time.deltaTime * 120);
+        if (Input.GetButtonDown("Dash") && dashTimer == 1)
+        {
+            if (canDash)
+            {
+                Dash();
+                canDash = false;
+            }
+        }
+        if (canDash == false)
+        {
+            dashTimer -= Time.deltaTime / dashTime;
+        }
+        if(dashTimer <= 0)
+        {
+            canDash = true;
+            dashTimer = 1;
+        }
+
+    }
+
+    void Dash()
+    {
+        if (canDash)
+        {
+            rigidBody.velocity = new Vector2(rigidBody.velocity.x * dashForce, rigidBody.velocity.y * dashForce);
+        }
+        ///StartCoroutine(CooldownTimer(dashTime));
+    }
+
+    IEnumerator CooldownTimer(float time)
+    {
+        yield return new WaitForSeconds(time);
     }
 }
