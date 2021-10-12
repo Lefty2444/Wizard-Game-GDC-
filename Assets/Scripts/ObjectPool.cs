@@ -22,6 +22,7 @@ public class ObjectPool : MonoBehaviour
     // Awake is called immediately when the object becomes active
     void Awake()
     {
+        SharedInstance = this;
         pooledObjects = new List<GameObject>[poolingClasses.Length];
         for (int i = 0; i < poolingClasses.Length; i++)
         {
