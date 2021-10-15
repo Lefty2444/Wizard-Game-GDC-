@@ -12,16 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5959eb8f1be9140831900a7b424c15, type: 3}
   m_Name: Ice
   m_EditorClassIdentifier: 
-  cooldown: 0.3
+  cooldown: 1
+  repetitions: 0
+  castingTime: 0.3
   element: 0
   sprites:
   - {fileID: 21300000, guid: c26dcf8ce8bfe4043a4ea9a85ca42619, type: 3}
   spriteRate: 20
-  color: {r: 0.024207853, g: 0.30616203, b: 0.754717, a: 1}
+  color: {r: 0.7773585, g: 1, b: 0.992947, a: 1}
   size: 0.7
   bulletSpeed: 7
   damage: 10
   projectileLifetime: 4
-  bounces: 0
+  bounces: 3
   bulletsPerShot: 2
   arc: 10

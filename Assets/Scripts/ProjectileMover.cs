@@ -102,7 +102,7 @@ public class ProjectileMover : MonoBehaviour
         bounces--;
         if (bounces < 0)
         {
-            //KillMe();X
+            KillMe();
         }
     }
 }

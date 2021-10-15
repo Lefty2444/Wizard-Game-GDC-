@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af5959eb8f1be9140831900a7b424c15, type: 3}
-  m_Name: Fireball
+  m_Name: Darkness
   m_EditorClassIdentifier: 
   cooldown: 1
-  repetitions: 0
-  castingTime: 0.3
+  repetitions: 10
+  castingTime: 0.1
   element: 0
   sprites:
   - {fileID: 21300000, guid: c26dcf8ce8bfe4043a4ea9a85ca42619, type: 3}
   spriteRate: 20
-  color: {r: 1, g: 0, b: 0, a: 1}
-  size: 0.4
-  bulletSpeed: 5
+  color: {r: 0, g: 0, b: 0, a: 1}
+  size: 0.6
+  bulletSpeed: 7
   damage: 10
-  projectileLifetime: 2
+  projectileLifetime: 1
   bounces: 1
-  bulletsPerShot: 12
-  arc: 100
+  bulletsPerShot: 1
+  arc: 30

@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5959eb8f1be9140831900a7b424c15, type: 3}
   m_Name: Poison
   m_EditorClassIdentifier: 
-  cooldown: 0.3
+  cooldown: 2
+  repetitions: 0
+  castingTime: 0.5
   element: 0
   sprites:
   - {fileID: 21300000, guid: c26dcf8ce8bfe4043a4ea9a85ca42619, type: 3}
@@ -21,7 +23,7 @@ MonoBehaviour:
   size: 0.9
   bulletSpeed: 3
   damage: 10
-  projectileLifetime: 1
-  bounces: 0
-  bulletsPerShot: 15
+  projectileLifetime: 2
+  bounces: 1
+  bulletsPerShot: 10
   arc: 360

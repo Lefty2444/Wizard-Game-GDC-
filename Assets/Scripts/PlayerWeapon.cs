@@ -14,7 +14,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private Transform wand;
     private Transform firePoint;
-
+    private bool isCasting = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,7 +28,7 @@ public class PlayerWeapon : MonoBehaviour
         firePoint = wand.GetChild(0);
         spellCooldowns = new float[spellBook.Length];
         for (int i = 0; i < spellCooldowns.Length; i++)
-            spellCooldowns[i] = spellBook[i].cooldown;
+            spellCooldowns[i] = 0;
     }
 
 
@@ -37,15 +37,28 @@ public class PlayerWeapon : MonoBehaviour
     void Update()
     {
         MoveWand();
+       
         DecrementCooldowns();
 
-        if (spellCooldowns[spellIndex] <= 0 && Input.GetMouseButton(0))
+        if (!isCasting && spellCooldowns[spellIndex] <= 0 && Input.GetMouseButton(0))
         {
-            CastSpell();
-            NextSpell();
+            isCasting = true;
+            StartCoroutine(SpellCasting());
         }
         //SetUI();
         
+    }
+
+    IEnumerator SpellCasting()
+    {   
+        for (int i = 0; i <= currentSpell.repetitions; i++)
+        {
+            CastSpell();
+            yield return new WaitForSeconds(currentSpell.castingTime);
+        }
+        spellCooldowns[spellIndex] = currentSpell.cooldown;
+        NextSpell();
+        isCasting = false;
     }
 
     void NextSpell()
@@ -64,9 +77,6 @@ public class PlayerWeapon : MonoBehaviour
         {
             CastShootingSpell();
         }
-        
-        // Set cooldowns
-        spellCooldowns[spellIndex] = currentSpell.cooldown;
     }
 
 
@@ -84,8 +94,8 @@ public class PlayerWeapon : MonoBehaviour
 
     void DecrementCooldowns()
     {
-        //for (int i = 0; i < spellCooldowns.Length; i++)
-        spellCooldowns[spellIndex] -= Time.deltaTime;
+        for (int i = 0; i < spellCooldowns.Length; i++)
+            spellCooldowns[i] -= Time.deltaTime;
     }
 
     void CreateBullet(ShootingSpell shootingSpell, float angle)
