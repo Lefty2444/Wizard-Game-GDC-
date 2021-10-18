@@ -15,15 +15,21 @@ MonoBehaviour:
   cooldown: 1
   repetitions: 10
   castingTime: 0.1
+  soundEffect:
+    sound: {fileID: 8300000, guid: b7fda32f3e48fda45aca4b628c8e3b38, type: 3}
+    volume: 0.4
+    pitch: 3
+    pitchVariation: 1
   element: 0
-  sprites:
-  - {fileID: 21300000, guid: c26dcf8ce8bfe4043a4ea9a85ca42619, type: 3}
-  spriteRate: 20
-  color: {r: 0, g: 0, b: 0, a: 1}
-  size: 0.6
-  bulletSpeed: 7
-  damage: 10
-  projectileLifetime: 1
-  bounces: 1
+  projectileSettings:
+    sprites: []
+    spriteRate: 20
+    color: {r: 0, g: 0, b: 0, a: 1}
+    size: 0.6
+    bulletSpeed: 7
+    damage: 10
+    projectileLifetime: 2
+    timeToBecomeActive: 0.2
+    bounces: 1
   bulletsPerShot: 1
   arc: 30

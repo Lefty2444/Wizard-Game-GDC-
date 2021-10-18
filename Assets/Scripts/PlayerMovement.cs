@@ -9,10 +9,15 @@ public class PlayerMovement : MonoBehaviour
 
     // Private variables can only be seen by this script
     private Rigidbody2D rigidBody;
+    private SpriteRenderer sr;
+    private Color originalColor;
+    private bool invulnerable = false;
 
     // Start is called before the first frame update
     private void Start()
     {
+        sr = GetComponent<SpriteRenderer>();
+        originalColor = sr.color;
         // Gets the rigidbody component that is responsible for managing the 2D physics of this object
         rigidBody = GetComponent<Rigidbody2D>();
     }
@@ -24,5 +29,27 @@ public class PlayerMovement : MonoBehaviour
         Vector3 movementVector = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0).normalized;
         // Add a force based on the movement vector
         rigidBody.AddForce(movementVector * movementSpeed * Time.deltaTime * 120);
+    }
+
+    
+    public void TakeDamage()
+    {
+        if (!invulnerable)
+            StartCoroutine(FlashSprite(1f));
+    }
+
+    IEnumerator FlashSprite(float flashingTime)
+    {
+        invulnerable = true;
+        sr.color = originalColor;
+        Color transparentColor = Color.red;
+        
+        for (float t = 0; t < 1; t += Time.deltaTime / (flashingTime))
+        {
+            sr.color = (Mathf.Cos(t * 30) < 0 ? originalColor : transparentColor);
+            yield return null;
+        }
+        sr.color = originalColor;
+        invulnerable = false;
     }
 }

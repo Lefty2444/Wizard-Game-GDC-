@@ -2,33 +2,59 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+public enum Area { allEdge, upperEdge, lowerEdge, leftEdge, rightEdge }
+[System.Serializable]
+public class SceneBounds
+{
+    public float upper;
+    public float lower;
+    public float left;
+    public float right;
+
+    
+
+    public Vector2 GetPosition(Area area)
+    {
+        float x = Random.Range(left, right);
+        float y = Random.Range(lower, upper);
+        switch (area)
+        {
+            case Area.upperEdge:
+                return new Vector2(x, y);
+            default:
+                return Vector2.zero;
+        }
+
+    }
+}
 
 public class PlayerWeapon : MonoBehaviour
 {
+    public SceneBounds bounds;
     public Spell currentSpell;
     public Spell[] spellBook = new Spell[3];
     public float wandRotationSpeed = 15;
+    private AudioSource audioSource;
 
     private int spellIndex = 0;
     private float[] spellCooldowns;
 
     private Transform wand;
     private Transform firePoint;
+    private Vector3 firePointPos;
     private bool isCasting = false;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+
 
     // Start is called before the first frame update
     void Awake()
     {
         wand = transform.GetChild(0);
         firePoint = wand.GetChild(0);
+        firePointPos = firePoint.position;
         spellCooldowns = new float[spellBook.Length];
         for (int i = 0; i < spellCooldowns.Length; i++)
             spellCooldowns[i] = 0;
+        audioSource = GetComponent<AudioSource>();
     }
 
 
@@ -73,9 +99,21 @@ public class PlayerWeapon : MonoBehaviour
 
     void CastSpell()
     {
+        audioSource.Stop();
+        SoundEffect sfx = currentSpell.soundEffect;
+        audioSource.clip = sfx.sound;
+        audioSource.volume = sfx.volume;
+        float pitch = Random.Range(sfx.pitch - sfx.pitchVariation, sfx.pitch + sfx.pitchVariation);
+        audioSource.pitch = pitch;
+        audioSource.Play();
+
+
         if (currentSpell is ShootingSpell)
         {
             CastShootingSpell();
+        } else if (currentSpell is EnvironmentSpell)
+        {
+            CastEnvironmentSpell();
         }
     }
 
@@ -84,12 +122,27 @@ public class PlayerWeapon : MonoBehaviour
     {
         ShootingSpell spell = (ShootingSpell)currentSpell;
         if (spell.bulletsPerShot <= 1)
-            CreateBullet(spell, Random.Range(-spell.arc / 2, spell.arc / 2));
+            CreateBullet(spell, spell.projectileSettings, Random.Range(-spell.arc / 2, spell.arc / 2));
         else
         {
             for (int i = 0; i < spell.bulletsPerShot; i++)
-                CreateBullet(spell, Mathf.Lerp(-spell.arc / 2, spell.arc / 2, ((float)i + .5f) / spell.bulletsPerShot));
+                CreateBullet(spell, spell.projectileSettings, Mathf.Lerp(-spell.arc / 2, spell.arc / 2, ((float)i + .5f) / spell.bulletsPerShot));
         }
+    }
+
+    private void CastEnvironmentSpell()
+    {
+        EnvironmentSpell spell = (EnvironmentSpell)currentSpell;
+        for (int i = 0; i < spell.projectilesPerWave; i++)
+        {
+            if (spell.spawnArea == SpawnAreas.LeftEdge)
+            {
+                
+            }
+            CreateBullet(spell, spell.projectileSettings, Random.Range(-spell.rotationOffset / 2, spell.rotationOffset / 2));
+        }
+        firePoint.position = firePointPos;
+        firePoint.rotation = Quaternion.identity;
     }
 
     void DecrementCooldowns()
@@ -98,16 +151,15 @@ public class PlayerWeapon : MonoBehaviour
             spellCooldowns[i] -= Time.deltaTime;
     }
 
-    void CreateBullet(ShootingSpell shootingSpell, float angle)
+    void CreateBullet(Spell spell, ProjectileSettings projectileSettings, float angle)
     {
         GameObject bullet = ObjectPool.SharedInstance.GetReadyObject("projectile");
         bullet.transform.position = firePoint.position;
         bullet.transform.rotation = firePoint.rotation;
         bullet.transform.eulerAngles += new Vector3(0, 0, angle);
-        bullet.transform.localScale = Vector3.one * shootingSpell.size;
+        bullet.transform.localScale = Vector3.one * projectileSettings.size;
         bullet.SetActive(true);
-        bullet.GetComponent<ProjectileMover>().SetStats(shootingSpell.projectileLifetime, shootingSpell.bulletSpeed,
-            shootingSpell.damage, shootingSpell.color, shootingSpell.sprites, shootingSpell.spriteRate, shootingSpell.bounces);
+        bullet.GetComponent<ProjectileMover>().SetStats(spell.castingTime, projectileSettings.projectileLifetime, projectileSettings.bulletSpeed, projectileSettings.color, projectileSettings.sprites, projectileSettings.spriteRate, projectileSettings.bounces);
     }
 
     private void MoveWand()

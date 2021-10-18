@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Shooting Spell", menuName = "Spells/Shooting", order = 1)]
-public class ShootingSpell : Spell
+[System.Serializable]
+public class ProjectileSettings
 {
     [Header("Visual Settings")]
 
@@ -19,7 +19,7 @@ public class ShootingSpell : Spell
     public float size = 1;
 
 
-    [Header("Core Settings")]
+    [Header("Core Projectile Settings")]
 
     [Tooltip("Speed of the bullet")]
     [Range(0, 30)]
@@ -30,12 +30,25 @@ public class ShootingSpell : Spell
     [Tooltip("Time in seconds for projectiles to despawn")]
     [Range(.1f, 5)]
     public float projectileLifetime = 1f;
-
-
-    [Header("Optional Settings")]
+    [Tooltip("Time in seconds before projectiles start checking for collisions")]
+    [Range(.2f, .5f)]
+    public float timeToBecomeActive = 1f;
     [Tooltip("Max number of ricochets before projectile despawns (if 0, it cannot bounce)")]
     [Range(0, 5)]
     public int bounces = 0;
+
+
+
+}
+
+
+[CreateAssetMenu(fileName = "New Shooting Spell", menuName = "Spells/Shooting", order = 1)]
+public class ShootingSpell : Spell
+{
+
+    public ProjectileSettings projectileSettings;
+    
+    [Header("Shooting Settings")]
     [Tooltip("Bullets fired per shot. If greater than 1, bullets will be evenly spaced across arc")]
     [Range(1, 20)]
     public int bulletsPerShot = 1;

@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class ProjectileMover : MonoBehaviour
 {
-    [HideInInspector]
-    public float damage;
   
     private SpriteRenderer sr;
     private Rigidbody2D rb;
+    private Collider2D hitbox;
 
-    private float speed;
     private Sprite[] sprites;
     private float timeLeft;
     private int currentIndex;
@@ -22,13 +20,15 @@ public class ProjectileMover : MonoBehaviour
     {
         sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+        hitbox = GetComponent<Collider2D>();
     }
 
-    public void SetStats(float lifetime, float speed, float damage, Color color, Sprite[] sprites, float spriteRate, int bounces)
+    public void SetStats(float castingTime, float lifetime, float speed, Color color, Sprite[] sprites, float spriteRate, int bounces)
     {
         StartCoroutine(StartFade(lifetime));
+        StartCoroutine(Casting(castingTime));
         rb.AddForce(transform.up * speed * 100);
-        this.damage = damage;
+        
         this.bounces = bounces;
 
         sr.color = color;
@@ -92,17 +92,41 @@ public class ProjectileMover : MonoBehaviour
         }
         KillMe();
     }
-    void KillMe()
+
+    IEnumerator Casting(float time)
+    {
+        float endSize = transform.localScale.x;
+        for (float t = 0; t < 1; t += Time.deltaTime / (time))
+        {
+            transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one * endSize, t);
+            yield return null;
+        }
+        hitbox.enabled = true;
+
+    }
+
+        void KillMe()
     {
         //GetComponent<Collider2D>().enabled = false;
+        hitbox.enabled = false;
         this.gameObject.SetActive(false);
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        bounces--;
-        if (bounces < 0)
+        
+        if (collision.gameObject.layer == 7) // The player is hit
         {
+            if (collision.gameObject.TryGetComponent(out PlayerMovement playerMovement)) {
+                playerMovement.TakeDamage();
+            }
             KillMe();
+        } else
+        {
+            bounces--;
+            if (bounces < 0)
+            {
+                KillMe();
+            }
         }
     }
 }
