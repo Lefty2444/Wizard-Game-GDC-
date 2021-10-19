@@ -31,16 +31,13 @@ public class ProjectileSettings
     [Range(.1f, 5)]
     public float projectileLifetime = 1f;
     [Tooltip("Time in seconds before projectiles start checking for collisions")]
-    [Range(.2f, .5f)]
-    public float timeToBecomeActive = 1f;
+    [Range(.1f, 2f)]
+    public float timeToBecomeActive = .2f;
     [Tooltip("Max number of ricochets before projectile despawns (if 0, it cannot bounce)")]
     [Range(0, 5)]
     public int bounces = 0;
 
-
-
 }
-
 
 [CreateAssetMenu(fileName = "New Shooting Spell", menuName = "Spells/Shooting", order = 1)]
 public class ShootingSpell : Spell

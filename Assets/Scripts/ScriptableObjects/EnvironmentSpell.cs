@@ -28,7 +28,7 @@ public class EnvironmentSpell : Spell
     [Header("Spawning Zone Settings")]
 
     [Tooltip("Where projectiles will be able to spawn")]
-    public SpawnAreas spawnArea;
+    public SpawnAreas spawnArea = SpawnAreas.AllEdges;
     [Tooltip("The starting rotation of projectiles")]
     public SpawnRotation spawnRotation = SpawnRotation.StraightFromEdge;
     [Tooltip("The max offset (in degrees) of starting rotation (0 means no randomness will be applied)")]
