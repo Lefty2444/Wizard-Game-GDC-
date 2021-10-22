@@ -25,13 +25,14 @@ public class ProjectileMover : MonoBehaviour
 
     public void SetStats(float castingTime, float lifetime, float speed, Color color, Sprite[] sprites, float spriteRate, int bounces)
     {
+        sr.color = color;
+        StopAllCoroutines();
         StartCoroutine(StartFade(lifetime));
         StartCoroutine(Casting(castingTime));
         rb.AddForce(transform.up * speed * 100);
         
         this.bounces = bounces;
 
-        sr.color = color;
 
         
         if (sprites.Length > 0)
@@ -95,14 +96,18 @@ public class ProjectileMover : MonoBehaviour
 
     IEnumerator Casting(float time)
     {
+        Color startColor = Color.black;
+        startColor.a = .5f;
+        Color endColor = sr.color;
         float endSize = transform.localScale.x;
         for (float t = 0; t < 1; t += Time.deltaTime / (time))
         {
             transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one * endSize, t);
+            sr.color = Color.Lerp(startColor, endColor, t * .8f);
             yield return null;
         }
         hitbox.enabled = true;
-
+        sr.color = endColor;
     }
 
         void KillMe()

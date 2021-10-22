@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public enum Area { allEdge, upperEdge, lowerEdge, leftEdge, rightEdge }
+
 [System.Serializable]
 public class SceneBounds
 {
@@ -10,21 +10,9 @@ public class SceneBounds
     public float lower;
     public float left;
     public float right;
-
-    
-
-    public Vector2 GetPosition(Area area)
+    public Vector2 GetRandomPos()
     {
-        float x = Random.Range(left, right);
-        float y = Random.Range(lower, upper);
-        switch (area)
-        {
-            case Area.upperEdge:
-                return new Vector2(x, y);
-            default:
-                return Vector2.zero;
-        }
-
+        return new Vector2(Random.Range(left, right), Random.Range(lower, upper));
     }
 }
 
@@ -50,11 +38,12 @@ public class PlayerWeapon : MonoBehaviour
     {
         wand = transform.GetChild(0);
         firePoint = wand.GetChild(0);
-        firePointPos = firePoint.position;
+        firePointPos = firePoint.localPosition;
         spellCooldowns = new float[spellBook.Length];
         for (int i = 0; i < spellCooldowns.Length; i++)
             spellCooldowns[i] = 0;
         audioSource = GetComponent<AudioSource>();
+        currentSpell = spellBook[0];
     }
 
 
@@ -120,13 +109,16 @@ public class PlayerWeapon : MonoBehaviour
 
     private void CastShootingSpell()
     {
+        
         ShootingSpell spell = (ShootingSpell)currentSpell;
         if (spell.bulletsPerShot <= 1)
-            CreateBullet(spell, spell.projectileSettings, Random.Range(-spell.arc / 2, spell.arc / 2));
+            CreateBullet(spell, spell.projectileSettings, firePoint.rotation, transform.eulerAngles.z + Random.Range(-spell.arc / 2, spell.arc / 2));
         else
         {
             for (int i = 0; i < spell.bulletsPerShot; i++)
-                CreateBullet(spell, spell.projectileSettings, Mathf.Lerp(-spell.arc / 2, spell.arc / 2, ((float)i + .5f) / spell.bulletsPerShot));
+            {
+                CreateBullet(spell, spell.projectileSettings, firePoint.rotation, Mathf.Lerp(-spell.arc / 2, spell.arc / 2, ((float)i + .5f) / spell.bulletsPerShot));
+            }
         }
     }
 
@@ -135,14 +127,94 @@ public class PlayerWeapon : MonoBehaviour
         EnvironmentSpell spell = (EnvironmentSpell)currentSpell;
         for (int i = 0; i < spell.projectilesPerWave; i++)
         {
-            if (spell.spawnArea == SpawnAreas.LeftEdge)
+            Vector3 spawnRotation = new Vector3(0, 0, 0);
+            Vector2 spawnPosition = bounds.GetRandomPos();
+            int side = Random.Range(0, 4);
+            switch (spell.spawnArea)
             {
-                
+                case SpawnAreas.Anywhere:
+                    break;
+                case SpawnAreas.AllEdges:
+                    if (side == 0)
+                    {
+                        spawnPosition.x = bounds.left;
+                        spawnRotation.z = -90; // right
+                    }
+                    else if (side == 1)
+                    {
+                        spawnPosition.x = bounds.right;
+                        spawnRotation.z = 90; // left
+                    }
+                    else if (side == 2)
+                    {
+                        spawnPosition.y = bounds.upper;
+                        spawnRotation.z = 180; // down
+                    }
+                    else if (side == 3)
+                    {
+                        spawnPosition.y = bounds.lower;
+                        spawnRotation.z = 0; // up
+                    }
+                    break;
+                case SpawnAreas.BottomEdge:
+                    spawnPosition.y = bounds.lower;
+                    spawnRotation.z = 0; // up
+                    break;
+                case SpawnAreas.TopEdge:
+                    spawnPosition.y = bounds.upper;
+                    spawnRotation.z = 180; // down
+                    break;
+                case SpawnAreas.LeftEdge:
+                    spawnPosition.x = bounds.left;
+                    spawnRotation.z = -90; // right
+                    break;
+                case SpawnAreas.RightEdge:
+                    spawnPosition.x = bounds.right;
+                    spawnRotation.z = 90; // left
+                    break;
+                case SpawnAreas.TopAndBottomEdge:
+                    if (side < 2)
+                    {
+                        spawnPosition.y = bounds.upper;
+                        spawnRotation.z = 180; // down
+                    }
+                    else
+                    {
+                        spawnPosition.y = bounds.lower;
+                        spawnRotation.z = 0; // up
+                    }
+                    break;
+                case SpawnAreas.SideEdges:
+                    if (side < 2)
+                    {
+                        spawnPosition.x = bounds.left;
+                        spawnRotation.z = -90; // right
+                    }
+                    else
+                    {
+                        spawnPosition.x = bounds.right;
+                        spawnRotation.z = 90; // left
+                    }
+                    break;
+                default:
+                    break;
             }
-            CreateBullet(spell, spell.projectileSettings, Random.Range(-spell.rotationOffset / 2, spell.rotationOffset / 2));
+            firePoint.position = spawnPosition;
+            if (spell.spawnRotation == SpawnRotation.Random)
+            {
+                spawnRotation.z = Random.Range(-180, 180);
+            } else if (spell.spawnRotation == SpawnRotation.FacingCenter) {
+                spawnRotation.z = Mathf.Atan2(-spawnPosition.y, -spawnPosition.x) * Mathf.Rad2Deg - 90;
+            }
+            else if (spell.spawnRotation == SpawnRotation.ParallelToCenter)
+            {
+                spawnRotation.z = Mathf.Atan2(-spawnPosition.y, -spawnPosition.x) * Mathf.Rad2Deg;
+            }
+
+            CreateBullet(spell, spell.projectileSettings, Quaternion.Euler(spawnRotation), Random.Range(-spell.rotationOffset / 2, spell.rotationOffset / 2));
         }
-        firePoint.position = firePointPos;
-        firePoint.rotation = Quaternion.identity;
+        firePoint.localPosition = firePointPos;
+        firePoint.localRotation = Quaternion.identity;
     }
 
     void DecrementCooldowns()
@@ -151,12 +223,12 @@ public class PlayerWeapon : MonoBehaviour
             spellCooldowns[i] -= Time.deltaTime;
     }
 
-    void CreateBullet(Spell spell, ProjectileSettings projectileSettings, float angle)
+    void CreateBullet(Spell spell, ProjectileSettings projectileSettings, Quaternion rotation, float offset)
     {
         GameObject bullet = ObjectPool.SharedInstance.GetReadyObject("projectile");
         bullet.transform.position = firePoint.position;
-        bullet.transform.rotation = firePoint.rotation;
-        bullet.transform.eulerAngles += new Vector3(0, 0, angle);
+        bullet.transform.rotation = rotation;
+        bullet.transform.eulerAngles += new Vector3(0, 0, offset);
         bullet.transform.localScale = Vector3.one * projectileSettings.size;
         bullet.SetActive(true);
         bullet.GetComponent<ProjectileMover>().SetStats(spell.castingTime, projectileSettings.projectileLifetime, projectileSettings.bulletSpeed, projectileSettings.color, projectileSettings.sprites, projectileSettings.spriteRate, projectileSettings.bounces);

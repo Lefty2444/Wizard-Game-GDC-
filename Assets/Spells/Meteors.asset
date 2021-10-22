@@ -9,28 +9,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af5959eb8f1be9140831900a7b424c15, type: 3}
-  m_Name: Ice
+  m_Script: {fileID: 11500000, guid: 0e8e3c975ddf49b41a636a7740034ec3, type: 3}
+  m_Name: Meteors
   m_EditorClassIdentifier: 
-  element: 0
   cooldown: 1
-  repetitions: 0
-  castingTime: 0.3
+  repetitions: 5
+  castingTime: 0.5
   soundEffect:
-    sound: {fileID: 8300000, guid: 0f90276f28e07c04da08152da52b9f47, type: 3}
-    volume: 1
+    sound: {fileID: 8300000, guid: 63249e9020031784cabe6d042793aaba, type: 3}
+    volume: 0.5
     pitch: 1
-    pitchVariation: 0.1
+    pitchVariation: 0.2
+  element: 0
+  spawnArea: 1
+  spawnRotation: 2
+  rotationOffset: 0
+  projectilesPerWave: 8
   projectileSettings:
     sprites:
     - {fileID: 21300000, guid: c26dcf8ce8bfe4043a4ea9a85ca42619, type: 3}
     spriteRate: 20
-    color: {r: 0.44716978, g: 0.9729238, b: 1, a: 1}
-    size: 0.7
-    bulletSpeed: 6
+    color: {r: 1, g: 0.30566037, b: 0.30566037, a: 1}
+    size: 0.8
+    bulletSpeed: 3
     damage: 10
-    projectileLifetime: 3
+    projectileLifetime: 5
     timeToBecomeActive: 0.2
-    bounces: 2
-  bulletsPerShot: 2
-  arc: 10
+    bounces: 0

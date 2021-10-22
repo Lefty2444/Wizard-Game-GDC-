@@ -25,6 +25,8 @@ public class Spell : ScriptableObject
 {
     [Header("Spell Settings")]
 
+    [Tooltip("Element classification for spell")]
+    public Element element;
 
     [Tooltip("Time in seconds for spell to recharge")] [Range(.1f, 30)]
     public float cooldown = 1.0f;
@@ -35,9 +37,9 @@ public class Spell : ScriptableObject
     [Tooltip("The number of seconds to cast (for every repetition)")] [Range(.1f, 5)]
     public float castingTime = .5f;
 
+    [Space(30)]
     [Tooltip("The sound effect that is played when the spell is cast")]
     public SoundEffect soundEffect;
 
-    [Tooltip("Element classification for spell")]
-    public Element element;
+
 }
