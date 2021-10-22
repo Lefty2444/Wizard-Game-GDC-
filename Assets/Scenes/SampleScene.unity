@@ -192,6 +192,9 @@ MonoBehaviour:
   poolingClasses:
   - name: projectile
     prefab: {fileID: 2446948933686074020, guid: 121f12c7bb41c634b86711f457b0c642, type: 3}
+    startingAmount: 100
+  - name: Slime Enemy
+    prefab: {fileID: 2446948933686074020, guid: 121f12c7bb41c634b86711f457b0c642, type: 3}
     startingAmount: 5
 --- !u!4 &444385191
 Transform:

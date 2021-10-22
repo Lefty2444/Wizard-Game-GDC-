@@ -206,6 +206,10 @@ public class PlayerWeapon : MonoBehaviour
             } else if (spell.spawnRotation == SpawnRotation.FacingCenter) {
                 spawnRotation.z = Mathf.Atan2(-spawnPosition.y, -spawnPosition.x) * Mathf.Rad2Deg - 90;
             }
+            else if (spell.spawnRotation == SpawnRotation.ParallelToCenter)
+            {
+                spawnRotation.z = Mathf.Atan2(-spawnPosition.y, -spawnPosition.x) * Mathf.Rad2Deg;
+            }
 
             CreateBullet(spell, spell.projectileSettings, Quaternion.Euler(spawnRotation), Random.Range(-spell.rotationOffset / 2, spell.rotationOffset / 2));
         }

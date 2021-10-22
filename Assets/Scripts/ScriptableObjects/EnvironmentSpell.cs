@@ -18,6 +18,7 @@ public enum SpawnAreas
 public enum SpawnRotation
 {
     FacingCenter,
+    ParallelToCenter,
     StraightFromEdge,
     Random
 }
