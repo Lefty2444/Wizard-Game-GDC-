@@ -16,7 +16,7 @@ MonoBehaviour:
   repetitions: 0
   castingTime: 0.5
   soundEffect:
-    sound: {fileID: 8300000, guid: c4ed5992074bd644abdbc99bafbfbfcd, type: 3}
+    sound: {fileID: 8300000, guid: d59326855e5a76144b3c9bbb0aca06fa, type: 3}
     volume: 1
     pitch: 1
     pitchVariation: 0.1
