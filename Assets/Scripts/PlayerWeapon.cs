@@ -19,18 +19,23 @@ public class SceneBounds
 public class PlayerWeapon : MonoBehaviour
 {
     public SceneBounds bounds;
-    public Spell currentSpell;
-    public Spell[] spellBook = new Spell[3];
+    public Spell currentPrimarySpell;
+    public Spell currentSecondarySpell;
+    public Spell[] primarySpellBook = new Spell[5];
+    public Spell[] secondarySpellBook = new Spell[3];
     public float wandRotationSpeed = 15;
     private AudioSource audioSource;
 
-    private int spellIndex = 0;
-    private float[] spellCooldowns;
+    private int primarySpellIndex = 0;
+    private int secondarySpellIndex = 0;
+    private float[] primarySpellCooldowns;
+    private float[] secondarySpellCooldowns;
 
     private Transform wand;
     private Transform firePoint;
     private Vector3 firePointPos;
-    private bool isCasting = false;
+    private bool isCastingPrimary = false;
+    private bool isCastingSecondary = false;
 
 
     // Start is called before the first frame update
@@ -39,11 +44,16 @@ public class PlayerWeapon : MonoBehaviour
         wand = transform.GetChild(0);
         firePoint = wand.GetChild(0);
         firePointPos = firePoint.localPosition;
-        spellCooldowns = new float[spellBook.Length];
-        for (int i = 0; i < spellCooldowns.Length; i++)
-            spellCooldowns[i] = 0;
+        primarySpellCooldowns = new float[primarySpellBook.Length];
+        for (int i = 0; i < primarySpellCooldowns.Length; i++)
+            primarySpellCooldowns[i] = 0;
+        secondarySpellCooldowns = new float[secondarySpellBook.Length];
+        for (int i = 0; i < secondarySpellCooldowns.Length; i++)
+            secondarySpellCooldowns[i] = 0;
+
         audioSource = GetComponent<AudioSource>();
-        currentSpell = spellBook[0];
+        currentPrimarySpell = primarySpellBook[0];
+        currentSecondarySpell = secondarySpellBook[0];
     }
 
 
@@ -53,43 +63,69 @@ public class PlayerWeapon : MonoBehaviour
     {
         MoveWand();
        
-        DecrementCooldowns();
+        DecrementPrimaryCooldowns();
+        DecrementSecondaryCooldowns();
 
-        if (!isCasting && spellCooldowns[spellIndex] <= 0 && Input.GetMouseButton(0))
+        if (!isCastingPrimary && primarySpellCooldowns[primarySpellIndex] <= 0 && Input.GetMouseButton(0))
         {
-            isCasting = true;
-            StartCoroutine(SpellCasting());
+            isCastingPrimary = true;
+            StartCoroutine(PrimarySpellCasting());
+        }
+        if (!isCastingSecondary && secondarySpellCooldowns[secondarySpellIndex] <= 0 && Input.GetMouseButton(1))
+        {
+            isCastingSecondary = true;
+            StartCoroutine(SecondarySpellCasting());
         }
         //SetUI();
-        
+
     }
 
-    IEnumerator SpellCasting()
+    IEnumerator PrimarySpellCasting()
     {   
-        for (int i = 0; i <= currentSpell.repetitions; i++)
+        for (int i = 0; i <= currentPrimarySpell.repetitions; i++)
         {
-            CastSpell();
-            yield return new WaitForSeconds(currentSpell.castingTime);
+            CastSpell(currentPrimarySpell);
+            yield return new WaitForSeconds(currentPrimarySpell.castingTime);
         }
-        spellCooldowns[spellIndex] = currentSpell.cooldown;
-        NextSpell();
-        isCasting = false;
+        primarySpellCooldowns[primarySpellIndex] = currentPrimarySpell.cooldown;
+        NextPrimarySpell();
+        isCastingPrimary = false;
     }
-
-    void NextSpell()
+    IEnumerator SecondarySpellCasting()
     {
-        spellIndex++;
-        if (spellIndex >= spellBook.Length)
+        for (int i = 0; i <= currentSecondarySpell.repetitions; i++)
         {
-            spellIndex = 0;
+            CastSpell(currentSecondarySpell);
+            yield return new WaitForSeconds(currentSecondarySpell.castingTime);
         }
-        currentSpell = spellBook[spellIndex];
+        secondarySpellCooldowns[secondarySpellIndex] = currentSecondarySpell.cooldown;
+        NextSecondarySpell();
+        isCastingSecondary = false;
     }
 
-    void CastSpell()
+    void NextPrimarySpell()
+    {
+        primarySpellIndex++;
+        if (primarySpellIndex >= primarySpellBook.Length)
+        {
+            primarySpellIndex = 0;
+        }
+        currentPrimarySpell = primarySpellBook[primarySpellIndex];
+    }
+    void NextSecondarySpell()
+    {
+        secondarySpellIndex++;
+        if (secondarySpellIndex >= secondarySpellBook.Length)
+        {
+            secondarySpellIndex = 0;
+        }
+        currentSecondarySpell = secondarySpellBook[secondarySpellIndex];
+    }
+
+    void CastSpell(Spell spell)
     {
         audioSource.Stop();
-        SoundEffect sfx = currentSpell.soundEffect;
+        SoundEffect sfx = spell.soundEffect;
         audioSource.clip = sfx.sound;
         audioSource.volume = sfx.volume;
         float pitch = Random.Range(sfx.pitch - sfx.pitchVariation, sfx.pitch + sfx.pitchVariation);
@@ -97,17 +133,17 @@ public class PlayerWeapon : MonoBehaviour
         audioSource.Play();
 
 
-        if (currentSpell is ShootingSpell)
+        if (spell is ShootingSpell)
         {
-            CastShootingSpell();
-        } else if (currentSpell is EnvironmentSpell)
+            CastShootingSpell(spell);
+        } else if (spell is EnvironmentSpell)
         {
-            CastEnvironmentSpell();
+            CastEnvironmentSpell(spell);
         }
     }
 
 
-    private void CastShootingSpell()
+    private void CastShootingSpell(Spell currentSpell)
     {
         
         ShootingSpell spell = (ShootingSpell)currentSpell;
@@ -122,7 +158,7 @@ public class PlayerWeapon : MonoBehaviour
         }
     }
 
-    private void CastEnvironmentSpell()
+    private void CastEnvironmentSpell(Spell currentSpell)
     {
         EnvironmentSpell spell = (EnvironmentSpell)currentSpell;
         for (int i = 0; i < spell.projectilesPerWave; i++)
@@ -217,10 +253,15 @@ public class PlayerWeapon : MonoBehaviour
         firePoint.localRotation = Quaternion.identity;
     }
 
-    void DecrementCooldowns()
+    void DecrementPrimaryCooldowns()
     {
-        for (int i = 0; i < spellCooldowns.Length; i++)
-            spellCooldowns[i] -= Time.deltaTime;
+        for (int i = 0; i < primarySpellCooldowns.Length; i++)
+            primarySpellCooldowns[i] -= Time.deltaTime;
+    }
+    void DecrementSecondaryCooldowns()
+    {
+        for (int i = 0; i < secondarySpellCooldowns.Length; i++)
+            secondarySpellCooldowns[i] -= Time.deltaTime;
     }
 
     void CreateBullet(Spell spell, ProjectileSettings projectileSettings, Quaternion rotation, float offset)
@@ -231,7 +272,7 @@ public class PlayerWeapon : MonoBehaviour
         bullet.transform.eulerAngles += new Vector3(0, 0, offset);
         bullet.transform.localScale = Vector3.one * projectileSettings.size;
         bullet.SetActive(true);
-        bullet.GetComponent<ProjectileMover>().SetStats(spell.castingTime, projectileSettings.projectileLifetime, projectileSettings.bulletSpeed, projectileSettings.color, projectileSettings.sprites, projectileSettings.spriteRate, projectileSettings.bounces);
+        bullet.GetComponent<ProjectileMover>().SetStats(projectileSettings.timeToBecomeActive, projectileSettings.projectileLifetime, projectileSettings.bulletSpeed, projectileSettings.color, projectileSettings.sprites, projectileSettings.spriteRate, projectileSettings.bounces, projectileSettings.knockback);
     }
 
     private void MoveWand()

@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5959eb8f1be9140831900a7b424c15, type: 3}
   m_Name: Fireball
   m_EditorClassIdentifier: 
+  element: 0
   cooldown: 1
   repetitions: 0
-  castingTime: 0.3
+  castingTime: 0.5
   soundEffect:
     sound: {fileID: 8300000, guid: 63249e9020031784cabe6d042793aaba, type: 3}
     volume: 1
     pitch: 1
     pitchVariation: 0.1
-  element: 0
   projectileSettings:
     sprites: []
     spriteRate: 20
@@ -30,6 +30,7 @@ MonoBehaviour:
     damage: 10
     projectileLifetime: 2
     timeToBecomeActive: 0.2
+    knockback: 3
     bounces: 1
   bulletsPerShot: 12
   arc: 100

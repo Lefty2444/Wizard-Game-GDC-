@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e8e3c975ddf49b41a636a7740034ec3, type: 3}
   m_Name: Meteors
   m_EditorClassIdentifier: 
+  element: 0
   cooldown: 1
   repetitions: 5
   castingTime: 0.5
@@ -20,19 +21,19 @@ MonoBehaviour:
     volume: 0.5
     pitch: 1
     pitchVariation: 0.2
-  element: 0
-  spawnArea: 1
+  spawnArea: 4
   spawnRotation: 2
   rotationOffset: 0
-  projectilesPerWave: 8
+  projectilesPerWave: 3
   projectileSettings:
     sprites:
     - {fileID: 21300000, guid: c26dcf8ce8bfe4043a4ea9a85ca42619, type: 3}
     spriteRate: 20
     color: {r: 1, g: 0.30566037, b: 0.30566037, a: 1}
     size: 0.8
-    bulletSpeed: 3
+    bulletSpeed: 2
     damage: 10
     projectileLifetime: 5
-    timeToBecomeActive: 0.2
+    timeToBecomeActive: 0.1
+    knockback: 1
     bounces: 0

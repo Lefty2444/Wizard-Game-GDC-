@@ -23,14 +23,15 @@ public class ProjectileMover : MonoBehaviour
         hitbox = GetComponent<Collider2D>();
     }
 
-    public void SetStats(float castingTime, float lifetime, float speed, Color color, Sprite[] sprites, float spriteRate, int bounces)
+    public void SetStats(float castingTime, float lifetime, float speed, Color color, Sprite[] sprites, float spriteRate, int bounces, float knockback)
     {
         sr.color = color;
         StopAllCoroutines();
         StartCoroutine(StartFade(lifetime));
         StartCoroutine(Casting(castingTime));
-        rb.AddForce(transform.up * speed * 100);
-        
+        rb.mass = knockback;
+        rb.AddForce(transform.up * speed * 100 * knockback);
+
         this.bounces = bounces;
 
 
@@ -96,6 +97,7 @@ public class ProjectileMover : MonoBehaviour
 
     IEnumerator Casting(float time)
     {
+        Debug.Log(time);
         Color startColor = Color.black;
         startColor.a = .5f;
         Color endColor = sr.color;
@@ -123,6 +125,13 @@ public class ProjectileMover : MonoBehaviour
         {
             if (collision.gameObject.TryGetComponent(out PlayerMovement playerMovement)) {
                 playerMovement.TakeDamage();
+            }
+            KillMe();
+        } else if (collision.gameObject.layer == 8) // An enemy is hit 
+        {
+            if (collision.gameObject.TryGetComponent(out EnemyBehavior enemyBehavior))
+            {
+                enemyBehavior.TakeDamage();
             }
             KillMe();
         } else

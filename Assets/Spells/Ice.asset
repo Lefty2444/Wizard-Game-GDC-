@@ -15,7 +15,7 @@ MonoBehaviour:
   element: 0
   cooldown: 1
   repetitions: 0
-  castingTime: 0.3
+  castingTime: 0.6
   soundEffect:
     sound: {fileID: 8300000, guid: 0f90276f28e07c04da08152da52b9f47, type: 3}
     volume: 1
@@ -31,6 +31,7 @@ MonoBehaviour:
     damage: 10
     projectileLifetime: 3
     timeToBecomeActive: 0.2
+    knockback: 10
     bounces: 2
   bulletsPerShot: 2
   arc: 10

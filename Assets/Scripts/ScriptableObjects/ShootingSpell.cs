@@ -31,8 +31,11 @@ public class ProjectileSettings
     [Range(.1f, 5)]
     public float projectileLifetime = 1f;
     [Tooltip("Time in seconds before projectiles start checking for collisions")]
-    [Range(.1f, 2f)]
+    [Range(0f, 2f)]
     public float timeToBecomeActive = .2f;
+    [Tooltip("Force of knockback")]
+    [Range(0f, 10f)]
+    public float knockback = 1f;
     [Tooltip("Max number of ricochets before projectile despawns (if 0, it cannot bounce)")]
     [Range(0, 5)]
     public int bounces = 0;
