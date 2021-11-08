@@ -30,7 +30,7 @@ MonoBehaviour:
     bulletSpeed: 6
     damage: 10
     projectileLifetime: 3
-    timeToBecomeActive: 0.2
+    timeToBecomeActive: 0.05
     knockback: 10
     bounces: 2
   bulletsPerShot: 2

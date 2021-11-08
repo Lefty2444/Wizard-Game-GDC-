@@ -648,6 +648,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameOverScreen: {fileID: 35894546}
+  dashForce: 3
+  dashTime: 0.8
   movementSpeed: 150
   hearts: 3
 --- !u!212 &670323169

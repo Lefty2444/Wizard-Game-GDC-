@@ -97,7 +97,6 @@ public class ProjectileMover : MonoBehaviour
 
     IEnumerator Casting(float time)
     {
-        Debug.Log(time);
         Color startColor = Color.black;
         startColor.a = .5f;
         Color endColor = sr.color;

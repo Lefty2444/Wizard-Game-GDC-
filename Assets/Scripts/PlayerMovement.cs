@@ -8,6 +8,9 @@ public class PlayerMovement : MonoBehaviour
 {
     public GameObject gameOverScreen;
 
+    public float dashForce;
+    public float dashTime;
+
     // Public variables can be seen by other scripts are are visible in the editor
     public float movementSpeed = 150;
     public int hearts = 5;
@@ -17,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
     private SpriteRenderer sr;
     private Color originalColor;
     private bool invulnerable = false;
+    private bool canDash = true;
+    private float dashTimer = 1;
 
     // Start is called before the first frame update
     private void Start()
@@ -39,6 +44,29 @@ public class PlayerMovement : MonoBehaviour
         Vector3 movementVector = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0).normalized;
         // Add a force based on the movement vector
         rigidBody.AddForce(movementVector * movementSpeed * Time.deltaTime * 120);
+        if (Input.GetButton("Dash") && dashTimer == 1)
+        {
+            if (canDash)
+            {
+                Dash();
+                canDash = false;
+            }
+        }
+        if (canDash == false)
+        {
+            dashTimer -= Time.deltaTime / dashTime;
+        }
+        if (dashTimer <= 0)
+        {
+            canDash = true;
+            dashTimer = 1;
+        }
+
+    }
+
+    void Dash()
+    {
+        rigidBody.velocity = new Vector2(rigidBody.velocity.x * dashForce, rigidBody.velocity.y * dashForce);
     }
 
 
