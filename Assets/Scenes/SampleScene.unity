@@ -651,7 +651,7 @@ MonoBehaviour:
   dashForce: 3
   dashTime: 0.8
   movementSpeed: 150
-  hearts: 3
+  hearts: 5
 --- !u!212 &670323169
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -740,13 +740,10 @@ MonoBehaviour:
   primarySpellBook:
   - {fileID: 11400000, guid: ef14d1cbf0824894298dac3264a7bf86, type: 2}
   - {fileID: 11400000, guid: ab3428208a02b4b418b1a121ad9ee17c, type: 2}
-  - {fileID: 11400000, guid: ef14d1cbf0824894298dac3264a7bf86, type: 2}
-  - {fileID: 11400000, guid: ab3428208a02b4b418b1a121ad9ee17c, type: 2}
   - {fileID: 11400000, guid: 017bdd273dcc88e4991b6ee97e795026, type: 2}
   secondarySpellBook:
   - {fileID: 11400000, guid: 7b917e290d29cdf4b97e4deded1bd40c, type: 2}
   - {fileID: 11400000, guid: aa00587757a5f76459c40f00f506eb22, type: 2}
-  - {fileID: 11400000, guid: 7b917e290d29cdf4b97e4deded1bd40c, type: 2}
   wandRotationSpeed: 15
 --- !u!82 &670323172
 AudioSource:
