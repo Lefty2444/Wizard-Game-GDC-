@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class PlayerMovement : MonoBehaviour
 {
     public GameObject gameOverScreen;
+    public Image heartImage;
 
     public float dashForce;
     public float dashTime;
@@ -14,9 +15,11 @@ public class PlayerMovement : MonoBehaviour
 
     // Public variables can be seen by other scripts are are visible in the editor
     public float movementSpeed = 150;
-    public int hearts = 5;
+    public int startingHearts = 5;
+
 
     // Private variables can only be seen by this script
+    private int hearts = 0;
     private Rigidbody2D rigidBody;
     private SpriteRenderer sr;
     private Color originalColor;
@@ -27,6 +30,8 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        hearts = startingHearts;
+        InitHearts();
         sr = GetComponent<SpriteRenderer>();
         originalColor = sr.color;
         // Gets the rigidbody component that is responsible for managing the 2D physics of this object
@@ -84,12 +89,29 @@ public class PlayerMovement : MonoBehaviour
             invulnerable = false;
         }
     }
+    public void UpdateHearts()
+    {
+        float width = 54 * hearts;
+        RectTransform heartsTransform = heartImage.transform as RectTransform;
+        heartImage.transform.localPosition = new Vector2(width / 2 - (startingHearts * 27), heartImage.transform.localPosition.y);
+        heartsTransform.sizeDelta = new Vector2(width, heartsTransform.sizeDelta.y);
+    }
+    public void InitHearts()
+    {
+        float width = 54 * startingHearts;
+        RectTransform heartsTransform = heartImage.transform.parent as RectTransform;
+        heartImage.transform.parent.localPosition = new Vector2(width / 2 - 135, heartImage.transform.parent.localPosition.y);
+        heartsTransform.sizeDelta = new Vector2(width, heartsTransform.sizeDelta.y);
+        UpdateHearts();
+    }
 
 
     public void TakeDamage()
     {
         if (!invulnerable) { 
             hearts--;
+            invulnerable = true;
+            UpdateHearts();
             if (hearts <= 0 ){
                 gameOverScreen.SetActive(true);
                 Time.timeScale = 0;
@@ -103,7 +125,6 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator FlashSprite(float flashingTime)
     {
-        invulnerable = true;
         sr.color = originalColor;
         Color transparentColor = Color.red;
 
