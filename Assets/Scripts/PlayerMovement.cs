@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
 
     public float dashForce;
     public float dashTime;
+    public ParticleSystem dashDust;
 
     // Public variables can be seen by other scripts are are visible in the editor
     public float movementSpeed = 150;
@@ -44,11 +45,12 @@ public class PlayerMovement : MonoBehaviour
         Vector3 movementVector = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0).normalized;
         // Add a force based on the movement vector
         rigidBody.AddForce(movementVector * movementSpeed * Time.deltaTime * 120);
-        if (Input.GetButton("Dash") && dashTimer == 1)
+        if ((Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0) && (Input.GetButton("Dash") && dashTimer == 1))
         {
             if (canDash)
             {
-                Dash();
+                StartCoroutine(Dash());
+                //Dash();
                 canDash = false;
             }
         }
@@ -64,9 +66,23 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    void Dash()
+    IEnumerator Dash()
     {
         rigidBody.velocity = new Vector2(rigidBody.velocity.x * dashForce, rigidBody.velocity.y * dashForce);
+        {
+            invulnerable = true;
+            dashDust.Emit(20);
+            sr.color = originalColor;
+            Color transparentColor = Color.clear;
+
+            for (float t = 0; t < 1; t += Time.deltaTime / (0.3f))
+            {
+                sr.color = (Mathf.Cos(t * 30) < 0 ? originalColor : transparentColor);
+                yield return null;
+            }
+            sr.color = originalColor;
+            invulnerable = false;
+        }
     }
 
 
